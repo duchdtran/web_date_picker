@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'datetime_extension.dart';
 import 'string_extension.dart';
 
+/// Class [WebDatePicker] help display date picker on web
 class WebDatePicker extends StatefulWidget {
   const WebDatePicker({
     Key? key,
@@ -11,17 +12,35 @@ class WebDatePicker extends StatefulWidget {
     required this.onChange,
     this.style,
     this.width = 200,
-    this.height = 36, this.prefix,
+    this.height = 36,
+    this.prefix,
+    this.dateformat = 'yyyy/MM/dd',
   }) : super(key: key);
 
+  /// The initial date first
   final DateTime? initialDate;
+
+  /// The earliest date the user is permitted to pick or input.
   final DateTime? firstDate;
+
+  /// The latest date the user is permitted to pick or input.
   final DateTime? lastDate;
+
+  /// Called when the user picks a day.
   final ValueChanged<DateTime?> onChange;
+
+  /// The text style of date form field
   final TextStyle? style;
+
+  /// The width and height of date form field
   final double width;
   final double height;
+
+  /// The prefix of date form field
   final Widget? prefix;
+
+  /// The date format will be displayed in date form field
+  final String dateformat;
 
   @override
   _WebDatePickerState createState() => _WebDatePickerState();
@@ -35,8 +54,6 @@ class _WebDatePickerState extends State<WebDatePicker> {
   final LayerLink _layerLink = LayerLink();
 
   final _controller = TextEditingController();
-
-  final _dateFormat = 'yyyy/MM/dd';
 
   late DateTime? _selectedDate;
   late DateTime _firstDate;
@@ -53,7 +70,7 @@ class _WebDatePickerState extends State<WebDatePicker> {
     _lastDate = widget.lastDate ?? DateTime(2100);
 
     if (_selectedDate != null) {
-      _controller.text = _selectedDate?.parseToString(_dateFormat) ?? '';
+      _controller.text = _selectedDate?.parseToString(widget.dateformat) ?? '';
     }
 
     _focusNode.addListener(() {
@@ -61,7 +78,7 @@ class _WebDatePickerState extends State<WebDatePicker> {
         _overlayEntry = _createOverlayEntry();
         Overlay.of(context)?.insert(_overlayEntry);
       } else {
-        _controller.text = _selectedDate.parseToString(_dateFormat);
+        _controller.text = _selectedDate.parseToString(widget.dateformat);
         widget.onChange.call(_selectedDate);
         _overlayEntry.remove();
       }
@@ -70,7 +87,7 @@ class _WebDatePickerState extends State<WebDatePicker> {
 
   void onChange(DateTime? selectedDate) {
     _selectedDate = selectedDate;
-    _controller.text = _selectedDate.parseToString(_dateFormat);
+    _controller.text = _selectedDate.parseToString(widget.dateformat);
 
     _focusNode.unfocus();
   }
@@ -124,15 +141,13 @@ class _WebDatePickerState extends State<WebDatePicker> {
           child: TextFormField(
             focusNode: _focusNode,
             controller: _controller,
-            
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(horizontal: 10),
               border: const OutlineInputBorder(),
               suffixIcon: _buildPrefixIcon(),
-              
             ),
             onChanged: (dateString) {
-              final date = dateString.parseToDateTime(_dateFormat);
+              final date = dateString.parseToDateTime(widget.dateformat);
               if (date.isBefore(_firstDate)) {
                 _selectedDate = _firstDate;
               } else if (date.isAfter(_lastDate)) {
