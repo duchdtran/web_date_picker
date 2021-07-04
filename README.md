@@ -4,6 +4,8 @@ The [Web date picker](https://pub.dev/packages/web_date_picker) provides a date 
 
 Based on [React date picker](https://www.npmjs.com/package/react-datepicker). 
 
+https://user-images.githubusercontent.com/52229424/124374073-5c958100-dcc2-11eb-8e71-d0bbdf903c43.mp4
+
 ## Installation
 
 In the `dependencies:` section of your `pubspec.yaml`, add the following line:
