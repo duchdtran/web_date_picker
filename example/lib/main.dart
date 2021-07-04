@@ -15,13 +15,12 @@ class MyApp extends StatelessWidget {
       ),
       home: GestureDetector(
         onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode()); //remove focus
+          FocusScope.of(context).requestFocus(FocusNode()); 
         },
         child: Scaffold(
           body: Center(
             child: WebDatePicker(
-              onChange: (value) {
-              },
+              onChange: (value) {},
             ),
           ),
         ),
