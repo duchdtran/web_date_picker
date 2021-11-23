@@ -15,6 +15,9 @@ class WebDatePicker extends StatefulWidget {
     this.height = 36,
     this.prefix,
     this.dateformat = 'yyyy/MM/dd',
+    this.overlayVerticalPosition = 5.0,
+    this.overlayHorizontalPosiition = 0.0,
+    this.inputDecoration,
   }) : super(key: key);
 
   /// The initial date first
@@ -35,6 +38,13 @@ class WebDatePicker extends StatefulWidget {
   /// The width and height of date form field
   final double width;
   final double height;
+
+  /// The position of calendar popup
+  final double overlayVerticalPosition;
+  final double overlayHorizontalPosiition;
+
+  //The decoration of text form field
+  final InputDecoration? inputDecoration;
 
   /// The prefix of date form field
   final Widget? prefix;
@@ -93,16 +103,14 @@ class _WebDatePickerState extends State<WebDatePicker> {
   }
 
   OverlayEntry _createOverlayEntry() {
-    final RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    final size = renderBox!.size;
-
     return OverlayEntry(
       builder: (context) => Positioned(
         width: 300,
         child: CompositedTransformFollower(
           link: _layerLink,
           showWhenUnlinked: false,
-          offset: Offset(0.0, size.height + 5.0),
+          offset: Offset(widget.overlayHorizontalPosiition,
+              widget.overlayVerticalPosition),
           child: Material(
             elevation: 5,
             child: SizedBox(
@@ -141,11 +149,12 @@ class _WebDatePickerState extends State<WebDatePicker> {
           child: TextFormField(
             focusNode: _focusNode,
             controller: _controller,
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-              border: const OutlineInputBorder(),
-              suffixIcon: _buildPrefixIcon(),
-            ),
+            decoration: widget.inputDecoration ??
+                InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                  border: const OutlineInputBorder(),
+                  suffixIcon: _buildPrefixIcon(),
+                ),
             onChanged: (dateString) {
               final date = dateString.parseToDateTime(widget.dateformat);
               if (date.isBefore(_firstDate)) {
