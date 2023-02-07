@@ -4,24 +4,28 @@ import 'string_extension.dart';
 
 /// Class [WebDatePicker] help display date picker on web
 class WebDatePicker extends StatefulWidget {
-  const WebDatePicker({
-    Key? key,
-    this.initialDate,
-    this.firstDate,
-    this.lastDate,
-    required this.onChange,
-    this.style,
-    this.width = 200,
-    this.height = 36,
-    this.prefix,
-    this.dateformat = 'yyyy/MM/dd',
-    this.overlayVerticalPosition = 5.0,
-    this.overlayHorizontalPosiition = 0.0,
-    this.inputDecoration,
-  }) : super(key: key);
+  const WebDatePicker(
+      {Key? key,
+      this.initialDate,
+      this.firstDate,
+      this.controller,
+      this.decoration,
+      this.lastDate,
+      required this.onChange,
+      this.style,
+      this.width = 200,
+      this.height = 36,
+      this.prefix,
+      this.dateformat = 'yyyy/MM/dd',
+      this.overlayVerticalPosition = 5.0,
+      this.overlayHorizontalPosiition = 0.0,
+      })
+      : super(key: key);
 
   /// The initial date first
   final DateTime? initialDate;
+  final TextEditingController? controller;
+  final InputDecoration? decoration;
 
   /// The earliest date the user is permitted to pick or input.
   final DateTime? firstDate;
@@ -44,13 +48,14 @@ class WebDatePicker extends StatefulWidget {
   final double overlayHorizontalPosiition;
 
   //The decoration of text form field
-  final InputDecoration? inputDecoration;
 
   /// The prefix of date form field
   final Widget? prefix;
 
   /// The date format will be displayed in date form field
   final String dateformat;
+
+  //icon calendar
 
   @override
   _WebDatePickerState createState() => _WebDatePickerState();
@@ -63,7 +68,7 @@ class _WebDatePickerState extends State<WebDatePicker> {
 
   final LayerLink _layerLink = LayerLink();
 
-  final _controller = TextEditingController();
+  late TextEditingController _controller;
 
   late DateTime? _selectedDate;
   late DateTime _firstDate;
@@ -74,7 +79,7 @@ class _WebDatePickerState extends State<WebDatePicker> {
   @override
   void initState() {
     super.initState();
-
+    _controller=widget.controller??TextEditingController();
     _selectedDate = widget.initialDate;
     _firstDate = widget.firstDate ?? DateTime(2000);
     _lastDate = widget.lastDate ?? DateTime(2100);
@@ -110,17 +115,17 @@ class _WebDatePickerState extends State<WebDatePicker> {
           link: _layerLink,
           showWhenUnlinked: false,
           offset: Offset(widget.overlayHorizontalPosiition,
-              widget.overlayVerticalPosition),
+              widget.overlayVerticalPosition+widget.height),
           child: Material(
             elevation: 5,
             child: SizedBox(
               height: 250,
-              child: CalendarDatePicker(
+              child:  TextFieldTapRegion(child: CalendarDatePicker(
                 firstDate: _firstDate,
                 lastDate: _lastDate,
                 initialDate: _selectedDate ?? DateTime.now(),
                 onDateChanged: onChange,
-              ),
+              ))
             ),
           ),
         ),
@@ -147,9 +152,10 @@ class _WebDatePickerState extends State<WebDatePicker> {
           width: widget.width,
           height: widget.height,
           child: TextFormField(
+            style: widget.style,
             focusNode: _focusNode,
             controller: _controller,
-            decoration: widget.inputDecoration ??
+            decoration: widget.decoration ??
                 InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                   border: const OutlineInputBorder(),
